@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from prettytable import PrettyTable #to display output from ML model
+from tabulate import tabulate # prettytable alternative
 import subprocess, sys #to handle the Ryu output
 import signal #for timer
 import os #for process handling
@@ -7,9 +8,10 @@ import numpy as np #for model features
 import pickle #to use ML model real-time
 
 ## command to run ##
-cmd = "sudo ryu run /usr/local/lib/python2.7/dist-packages/ryu/app/simple_monitor_AK.py"
+#cmd = "sudo ryu run /tc/lib/python3.7/site-packages/ryu/app/simple_monitor_AK.py"
+cmd = "sudo ryu-manager /home/ussy/traffic_classifier/tc/lib/python3.7/site-packages/ryu/app/simple_monitor_AK.py"
 flows = {} #empty flow dictionary
-TIMEOUT = 15*60 #15 min #how long to collect training data
+TIMEOUT = 10*60 #15 min #how long to collect training data
 
 class Flow:
     def __init__(self, time_start, datapath, inport, ethsrc, ethdst, outport, packets, bytes):
@@ -82,7 +84,8 @@ class Flow:
 
 #function to print flow attributes and output of ML model to classify the flow
 def printclassifier(model):
-    x = PrettyTable()
+    #x = PrettyTable()
+    x = tabulate
     x.field_names = ["Flow ID", "Src MAC", "Dest MAC", "Traffic Type","Forward Status","Reverse Status"]
 
     for key,flow in flows.items():
@@ -97,9 +100,11 @@ def printclassifier(model):
         elif label == 3: label = ['voice']
         
         x.add_row([key, flow.ethsrc, flow.ethdst, label[0],flow.forward_status,flow.reverse_status]) 
-    print(x)#print output in pretty mode (i.e. formatted table)
+    print(tabulate(x))#print output in pretty mode (i.e. formatted table)
+    #print(tabulate(x))
+   
 
-#function to print flow attributes when collecting training data
+     #function to print flow attributes when collecting training data
 def printflows(traffic_type,f):
     for key,flow in flows.items():
         outstring = '\t'.join([

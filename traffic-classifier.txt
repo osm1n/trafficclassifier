@@ -1,0 +1,64 @@
+cd trafficclassifier
+
+	for new install fix indentation in simple_monitor_AK.py
+	install numpy, prettyTable etc. and any other shit that fails
+
+Run Controller:
+
+	ryu-manager simple_monitor_AK.py /home/ubuntu/flowmanager/flowmanager.py --wsapi-host 118.138.241.99 --wsapi-port 8080
+
+Run Mininet as below or topology or connect to Testbed SDN (refer to /Downloads/Phd/WorkingNotes/Run.txt)
+
+	From Mininet Host
+
+		sudo mn --controller=remote,ip=192.168.10.8 --mac --switch=ovsk,protocols=OpenFlow13 --topo=linear,6
+
+====================================================================================================
+To collect the training data:
+=====================================================================================================
+
+Run the above to setup the network
+
+Generate traffic between nodes and run the script to get training data
+using DITG or any other tool - refer to /Downloads/Phd/WorkingNotesDITG.txt
+
+Traffic must be flowing before running the script to collect training data as below
+
+			sudo python traffic_classifier_python3.py train [voice|video|ftp]
+
+After the CSV files for each traffic type are generated, they are combined in a complete Pandas Dataframe object used for the
+model training and testing. Supervised Learning - Logistic Regression
+
+
+===================================================================================================
+Training Model and testing on ScikitLearn
+====================================================================================================
+
+Transfer generated .csvs to Jupyter Note or Google Collabs and run with any ML of choosing
+
+For this project use the file NetSoft_project.ipynb to Train and Classify the dataset follow the file 
+and do the necessary. 
+
+Save the models at the end of the file and copy the models back into this main directory.
+
+
+====================================================================================================
+Classify using Supervised or Unsupervised
+=====================================================================================================
+
+Introduce the algorithms and where they are chosen etc.
+
+
+Use saved ML models to classify or cluster using realtime data from the previous step by copying them 
+into the root directory here.
+
+Future modify the classifier script to support other models such as from DeepDefense.
+
+
+	To start a near real time traffic classification application using unsupervised ML, run: 
+
+			sudo python traffic_classifier_python3.py unsupervised
+	        
+	To start a near real time traffic classification application using supervised ML, run: 
+
+	        sudo python traffic_classifier_python3.py supervised
